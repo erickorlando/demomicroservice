@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Data
+namespace Dto
 {
     public class Class1
     {
