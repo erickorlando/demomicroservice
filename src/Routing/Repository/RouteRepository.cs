@@ -20,7 +20,7 @@ namespace Repository
         {
             var filtro = (RouteCriteria) filter;
 
-            var list = await _dbContext.Query<Route>()
+            var list = await _dbContext.Set<Route>()
                 .FromSql($"uspSelectAllRoutes {filtro.CountryCode}")
                 .AsNoTracking()
                 .ToListAsync();

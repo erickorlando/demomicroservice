@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Provider;
@@ -39,7 +40,9 @@ namespace Routing.Api
                             .AllowAnyMethod()
                             .AllowAnyHeader()))
                 .AddApiVersions(Configuration)
-                .AddDbContext<RoutingDbContext>()
+                .AddDbContext<RoutingDbContext>(options 
+                    => options
+                        .UseSqlServer(Configuration.GetConnectionString("default")))
                 .AddMvc()
                     .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
