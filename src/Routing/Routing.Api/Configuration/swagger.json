@@ -1,0 +1,41 @@
+{
+  "Swagger": {
+    "Routing.Api": {
+      "Gen": {
+        "Security": [
+          {
+            "Name": "Authorization_App",
+            "Description": " 'JWT Authorization header using the Bearer scheme. Example: 'Authorization_App: {key}' ",
+            "In": "header",
+            "Type": "apiKey"
+          },
+          {
+            "Name": "Authorization_User",
+            "Description": " 'JWT Authorization header using the Bearer scheme. Example: 'Authorization_User: {key}' ",
+            "In": "header",
+            "Type": "apiKey"
+          }
+        ],
+        "Doc": [
+          {
+            "Version": "v1",
+            "Title": "Routing",
+            "Description": "Microservice routing",
+            "Contact": {
+              "Name": ": Erick Orlando",
+              "Email": "evelasco@csticorp.biz"
+            },
+            "License": {
+              "Name": "Copyright : Quimicasuiza",
+              "Url": "https://www.quimicasuiza.com"
+            }
+          }
+        ]
+      },
+      "Use": {
+        "Route": "document",
+        "DocumentTitle": "Routing"
+      }
+    }
+  }
+}
