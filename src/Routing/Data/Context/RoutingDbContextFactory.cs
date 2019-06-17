@@ -6,7 +6,7 @@ using System.IO;
 
 namespace Data.Context
 {
-    public class RoutingDbContextFactory : IDesignTimeDbContextFactory<RoutingDbContext>
+    public class RoutingDbContextFactory : IDesignTimeDbContextFactory<RoutingDbContext>, IDisposable
     {
         public RoutingDbContext CreateDbContext(string[] args)
         {
@@ -20,6 +20,7 @@ namespace Data.Context
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json")
                 .AddJsonFile($"appsettings.{environmentName}.json", true)
+                .AddEnvironmentVariables()
                 .Build();
 
             var builder = new DbContextOptionsBuilder<RoutingDbContext>();
@@ -29,6 +30,11 @@ namespace Data.Context
             builder.UseSqlServer(connectionString);
 
             return new RoutingDbContext(builder.Options);
+        }
+
+        public void Dispose()
+        {
+            // Liberar Recursos.
         }
     }
 }

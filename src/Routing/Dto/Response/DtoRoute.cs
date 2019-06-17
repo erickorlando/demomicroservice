@@ -1,12 +1,9 @@
-﻿using System;
-
-namespace Entity
+﻿namespace Dto.Response
 {
-    public class Route : EntityBase
+    public class DtoRoute
     {
         public string Code { get; set; }
         public string Name { get; set; }
-        public string CountryCode { get; set; }
         public int Color { get; set; }
     }
 }

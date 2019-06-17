@@ -19,6 +19,12 @@ namespace Data.Mapping
             builder.Property(p => p.Name)
                 .HasMaxLength(50)
                 .IsRequired();
+
+            builder.Property(p => p.Color)
+                .IsRequired();
+
+            builder.Property(p => p.RowStatus)
+                .IsRowVersion();
         }
     }
 }
