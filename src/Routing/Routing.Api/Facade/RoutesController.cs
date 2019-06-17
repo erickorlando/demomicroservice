@@ -21,7 +21,7 @@ namespace Routing.Api.Facade
             _routeService = routeService;
         }
 
-        [HttpGet, MapToApiVersion("1.0")]
+        [HttpPost, MapToApiVersion("1.0")]
         [SwaggerResponse(200, "With information", typeof(DtoRoutesResponse))]
         [SwaggerResponse(204, "Not information", typeof(object))]
         [SwaggerResponse(400, "Error in identity validations", typeof(string))]
