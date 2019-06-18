@@ -1,6 +1,8 @@
 ﻿using Business;
 using Microsoft.Extensions.DependencyInjection;
 using Repository;
+using Repository.Adapters;
+using Repository.Factory;
 
 namespace Service
 {
@@ -12,7 +14,11 @@ namespace Service
 
             services.AddScoped<IRouteService, RouteService>();
 
-            services.AddScoped<IRepository<Entity.Route>, RouteRepository>();
+            // EF Core
+            //services.AddScoped<IRepository<Entity.Route>, RouteRepository>();
+
+            // SQL Server
+            services.AddScoped<IRepository<Entity.Route>, RouteSqlRepository>();
 
             return services;
         }

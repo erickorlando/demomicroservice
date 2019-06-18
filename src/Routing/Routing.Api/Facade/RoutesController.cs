@@ -9,6 +9,9 @@ using System.Threading.Tasks;
 
 namespace Routing.Api.Facade
 {
+    /// <summary>
+    /// Controlador de Rutas
+    /// </summary>
     [ApiVersion("1.0")]
     [Route("[controller]/[action]/v{version:apiVersion}")]
     [ApiController]
@@ -16,11 +19,17 @@ namespace Routing.Api.Facade
     {
         private readonly IRouteService _routeService;
 
+        /// <summary>
+        /// Servicio de Rutas
+        /// </summary>
         public RoutesController(IRouteService routeService)
         {
             _routeService = routeService;
         }
 
+        /// <summary>
+        /// Obtiene datos de las rutas
+        /// </summary>
         [HttpPost, MapToApiVersion("1.0")]
         [SwaggerResponse(200, "With information", typeof(DtoRoutesResponse))]
         [SwaggerResponse(204, "Not information", typeof(object))]

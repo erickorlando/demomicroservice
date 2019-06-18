@@ -1,4 +1,7 @@
-﻿using Data.Context;
+﻿using AutoMapper;
+using AutoMapper.Data.Configuration.Conventions;
+using AutoMapper.Data.Mappers;
+using Data.Context;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -8,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Provider;
 using Service;
+using System.Data;
 
 namespace Routing.Api
 {
@@ -45,6 +49,14 @@ namespace Routing.Api
                         .UseSqlServer(Configuration.GetConnectionString("default")))
                 .AddMvc()
                     .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+
+            // Inicializamos la configuracion de AutoMapper.
+            Mapper.Initialize(cfg =>
+            {
+                cfg.Mappers.Insert(0, new DataReaderMapper());
+                cfg.AddMemberConfiguration().AddMember<DataRecordMemberConfiguration>();
+                cfg.CreateMap<IDataRecord, Entity.Route>();
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

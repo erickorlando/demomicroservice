@@ -1,11 +1,10 @@
-﻿using System;
+﻿using AutoMapper;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
-using AutoMapper;
-using Microsoft.AspNetCore.JsonPatch.Internal;
 using Utility;
 
 namespace Provider
@@ -93,7 +92,8 @@ namespace Provider
                 command.CommandType = CommandType.StoredProcedure;
 
                 if (timeout > 0) { command.CommandTimeout = timeout; }
-                if (param != null) { param.ForEach(P => command.Parameters.Add(new SqlParameter(P.key, IsNull(P.value)))); }
+
+                param?.ForEach(p => command.Parameters.Add(new SqlParameter(p.key, IsNull(p.value))));
 
                 connection.Open();
 
@@ -158,7 +158,8 @@ namespace Provider
                     command.CommandType = CommandType.StoredProcedure;
 
                     if (timeout > 0) { command.CommandTimeout = timeout; }
-                    if (param != null) { param.ForEach(P => command.Parameters.Add(new SqlParameter(P.key, IsNull(P.value)))); }
+
+                    param?.ForEach(p => command.Parameters.Add(new SqlParameter(p.key, IsNull(p.value))));
 
                     connection.Open();
 

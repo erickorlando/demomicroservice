@@ -14,8 +14,6 @@ namespace Data.Context
                 Environment.GetEnvironmentVariable(
                     "Hosting:Environment");
 
-            System.Diagnostics.Debug.WriteLine(environmentName);
-
             IConfigurationRoot configuration = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json")
