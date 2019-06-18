@@ -13,7 +13,7 @@ namespace Data.Mapping
                 .IsRequired();
 
             builder.Property(p => p.Code)
-                .HasMaxLength(2)
+                .HasMaxLength(10)
                 .IsRequired();
 
             builder.Property(p => p.Name)
