@@ -2,37 +2,70 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
+using Microsoft.AspNetCore.JsonPatch.Internal;
 using Utility;
 
 namespace Provider
 {
     public class SqlServerService
     {
-        protected readonly string _cn;
+        protected readonly string Cn;
 
-        public SqlServerService(string cn) => _cn = cn;
+        public SqlServerService(string cn) => Cn = cn;
+
+        public async Task<ICollection<T>> TransaccionAsync<T>(string procedure, ICollection<Parameter> parameters, int timeout = 0)
+            where T : class
+        {
+            IEnumerable<T> list = new List<T>();
+            using (var connection = new SqlConnection(Cn))
+            {
+                using (var command = connection.CreateCommand())
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.CommandText = procedure;
+
+                    if (timeout > 0) { command.CommandTimeout = timeout; }
+
+                    if (parameters.Any())
+                        foreach (var parameter in parameters)
+                            command.Parameters.AddWithValue(parameter.key, IsNull(parameter.value));
+
+                    await connection.OpenAsync();
+
+                    using (var reader = await command.ExecuteReaderAsync())
+                    {
+                        if (reader.HasRows)
+                            list = Mapper.Map<IDataReader, IEnumerable<T>>(reader);
+                    }
+                }
+            }
+
+            return list.ToList();
+        }
 
         public async Task<DataTable> TransaccionAsync(string procedure, Parameter param)
         {
-            return await TransaccionAsync(procedure,param,0);
+            return await TransaccionAsync(procedure, param, 0);
         }
 
         public async Task<DataTable> TransaccionAsync(string procedure, Parameter param, int timeout)
         {
-            using (SqlConnection connection = new SqlConnection(_cn))
-            using (SqlCommand command = new SqlCommand(procedure, connection))
+            using (var connection = new SqlConnection(Cn))
+            using (var command = new SqlCommand(procedure, connection))
             {
-                DataTable data = new DataTable();
+                var data = new DataTable();
 
                 command.CommandType = CommandType.StoredProcedure;
 
                 if (timeout > 0) { command.CommandTimeout = timeout; }
                 if (param != null) { command.Parameters.Add(new SqlParameter(param.key, IsNull(param.value))); }
 
-                connection.Open();
+                await connection.OpenAsync();
 
-                using (SqlDataReader reader = await command.ExecuteReaderAsync())
+                using (var reader = await command.ExecuteReaderAsync())
                 {
                     data.Load(reader);
 
@@ -47,12 +80,12 @@ namespace Provider
 
         public async Task<DataTable> TransaccionAsync(string procedure, List<Parameter> param)
         {
-            return await TransaccionAsync(procedure,param,0);
+            return await TransaccionAsync(procedure, param, 0);
         }
 
         public async Task<DataTable> TransaccionAsync(string procedure, List<Parameter> param, int timeout)
         {
-            using (SqlConnection connection = new SqlConnection(_cn))
+            using (SqlConnection connection = new SqlConnection(Cn))
             using (SqlCommand command = new SqlCommand(procedure, connection))
             {
                 DataTable data = new DataTable();
@@ -86,7 +119,7 @@ namespace Provider
         {
             return await Task<DataSet>.Factory.StartNew(() =>
             {
-                using (SqlConnection connection = new SqlConnection(_cn))
+                using (SqlConnection connection = new SqlConnection(Cn))
                 using (SqlCommand command = new SqlCommand(procedure, connection))
                 using (DataSet data = new DataSet())
                 {
@@ -118,7 +151,7 @@ namespace Provider
         {
             return await Task<DataSet>.Factory.StartNew(() =>
             {
-                using (SqlConnection connection = new SqlConnection(_cn))
+                using (SqlConnection connection = new SqlConnection(Cn))
                 using (SqlCommand command = new SqlCommand(procedure, connection))
                 using (DataSet data = new DataSet())
                 {
