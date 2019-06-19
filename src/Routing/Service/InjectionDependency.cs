@@ -14,10 +14,10 @@ namespace Service
             services.AddScoped<IRouteService, RouteService>();
 
             // EF Core
-            services.AddScoped<IRepository<Entity.Route>, RouteRepository>();
+            //services.AddScoped<IRepository<Entity.Route>, RouteRepository>();
 
             // SQL Server
-            //services.AddSingleton<IRepository<Entity.Route>, RouteSqlRepository>();
+            services.AddSingleton<IRepository<Entity.Route>, RouteSqlRepository>();
             return services;
         }
     }
