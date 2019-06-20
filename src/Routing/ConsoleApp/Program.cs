@@ -1,41 +1,26 @@
-﻿using System;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using System;
 using System.IO;
-using System.Net;
-using Data.Context;
-using Entity;
-using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 
 namespace ConsoleApp
 {
     class Program
     {
-        static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             try
             {
-                using (var ctx = new RoutingDbContextFactory().CreateDbContext(args))
-                {
-                    Console.WriteLine("Prueba de Ingreso a la BD");
+                var services = new ServiceCollection();
+                ConfigureServices(services);
 
-                    for (int i = 0; i < 10000; i++)
-                    {
-                        Console.WriteLine($"Insertando registro {i}");
+                var serviceProvider = services.BuildServiceProvider();
 
-                        var item = new Route
-                        {
-                            Code = $"R{i}",
-                            Color = i,
-                            CountryCode = "PE",
-                            Name = $"Route {i:00}",
-                        };
+                await serviceProvider.GetService<App>().Run();
 
-                        ctx.Database.ExecuteSqlCommand("uspInsertRoute @p0,@p1,@p2,@p3", item.Code, item.Name,
-                            item.CountryCode, item.Color);
-
-                    }
-
-                    ctx.SaveChanges();
-                }
+                await TestApiRestFromClient(serviceProvider);
             }
             catch (Exception ex)
             {
@@ -46,6 +31,35 @@ namespace ConsoleApp
                 Console.ReadLine();
             }
 
+        }
+
+        private static void ConfigureServices(IServiceCollection services)
+        {
+            services.AddLogging(builder =>
+                builder
+                    .AddDebug()
+                    .AddConsole()
+                );
+
+            // build config
+            var configuration = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json", false)
+                .AddEnvironmentVariables()
+                .Build();
+
+            services.AddOptions();
+            services.Configure<AppSettings>(configuration.GetSection("Security"));
+
+            // add app
+            services.AddTransient<App>();
+            services.AddTransient<TestFromApi>();
+        }
+
+        private static async Task TestApiRestFromClient(ServiceProvider provider)
+        {
+            var test = provider.GetService<TestFromApi>();
+            await test.Execute();
         }
     }
 }
